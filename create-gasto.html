@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro de Gastos</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="mb-4 text-center">Cadastro de Gastos</h2>
+          <form id="cadastroGastoForm">
+            <div class="mb-3">
+              <label for="usuario" class="form-label">Usuário</label>
+              <select class="form-select" id="usuario" name="usuario" required>
+                <!-- Options serão preenchidas dinamicamente via JavaScript -->
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="valor" class="form-label">Valor</label>
+              <input type="number" class="form-control" id="valor" name="valor" required>
+            </div>
+            <div class="mb-3">
+              <label for="dataStart" class="form-label">Data de Início</label>
+              <input type="date" class="form-control" id="dataStart" name="dataStart" required>
+            </div>
+            <div class="mb-3">
+              <label for="local" class="form-label">Local</label>
+              <input type="text" class="form-control" id="local" name="local" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Cadastrar Gasto</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JavaScript (opcional, dependendo dos requisitos da sua aplicação) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Script para carregar os usuários e enviar dados para a API -->
+<script>
+  // Função para carregar os usuários disponíveis
+  async function carregarUsuarios() {
+    try {
+      const response = await fetch('http://localhost:3000/get/alluser');
+    
+      const data = await response.json();
+
+      const usuarioSelect = document.getElementById('usuario');
+      // Limpa as opções atuais do select
+      usuarioSelect.innerHTML = '';
+      // Adiciona uma opção em branco inicial
+      usuarioSelect.insertAdjacentHTML('beforeend', '<option value="" selected disabled>Selecione um usuário</option>');
+      // Adiciona as opções de usuários no select
+      data.forEach(user => {
+        usuarioSelect.insertAdjacentHTML('beforeend', `<option value="${user.id}">${user.nome}</option>`);
+      });
+
+    } catch (error) {
+      console.error('Erro:', error);
+      alert('Ocorreu um erro ao carregar usuários');
+    }
+  }
+
+  // Chama a função para carregar os usuários ao carregar a página
+  window.onload = function() {
+    carregarUsuarios();
+  };
+
+  // Função para enviar dados para a API ao submeter o formulário
+  document.getElementById('cadastroGastoForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const formData = new FormData(this);
+    const gastoData = {
+      usuario: formData.get('usuario'),
+      valor: formData.get('valor'),
+      dataStart: formData.get('dataStart'),
+      local: formData.get('local')
+    };
+
+    fetch('http://localhost:3000/create/gasto', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(gastoData),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Erro ao cadastrar gasto');
+      }
+      window.location.href = 'listagem-gastos.html'; 
+    })
+    .catch(error => {
+      console.error('Erro:', error);
+      alert('Ocorreu um erro ao cadastrar gasto');
+    });
+  });
+</script>
+
+</body>
+</html>
