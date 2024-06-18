@@ -1,2 +1,2 @@
-# P3-relacional
-Esse repositório foi criado para auxiliar colegas de faculdade a entender Node, Typescript, Typeorm, Postgres 
+# AEP
+Esse repositório foi criado para o desenvolvimento da AEP no segundo bimestre de 2024, para a turma de análise e desenvolvimento de sistemas.
